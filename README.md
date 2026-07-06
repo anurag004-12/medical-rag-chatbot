@@ -299,10 +299,9 @@ This chatbot improves information retrieval by:
 
 # 📸 Screenshots
 
-```
-![alt text](image.png)
 
-```
+![Home Page](assets/chatbot.png)
+
 
 ---
 
@@ -328,9 +327,5 @@ This project is licensed under the MIT License.
 
 **Anurag Patel**
 
-- GitHub: https://github.com/your-github-username
-- LinkedIn: https://linkedin.com/in/your-linkedin-profile
-
 ---
 
-⭐ If you found this project useful, consider giving it a **Star** on GitHub!
