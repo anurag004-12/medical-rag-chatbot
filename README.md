@@ -162,8 +162,8 @@ Medical-Chatbot/
 │
 └── static/
     ├── style.css
+```
     
-
 ---
 
 # ⚙️ Installation
@@ -300,8 +300,7 @@ This chatbot improves information retrieval by:
 # 📸 Screenshots
 
 ```
-assets/
-├── chatbot.png
+![alt text](image.png)
 
 ```
 
