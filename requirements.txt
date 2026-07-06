@@ -1,8 +1,17 @@
-ctransformers==0.2.5
-sentence-transformers==2.2.2
-pinecone
-langchain==0.1.20
 flask
+python-dotenv
+
+langchain
+langchain-community
+langchain-core
+langchain-text-splitters
+
+langchain-google-genai
+langchain-huggingface
+langchain-pinecone
+
+sentence-transformers
+pinecone
 pypdf
 
 -e .
