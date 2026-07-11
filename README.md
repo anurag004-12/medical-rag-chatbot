@@ -12,7 +12,7 @@ Traditional chatbots either:
 - Depend on predefined responses, limiting flexibility.
 - Answer solely from an LLM's general knowledge, which may produce hallucinations or inaccurate medical information.
 
-The objective of this project is to build an intelligent medical assistant that retrieves relevant information from trusted medical documents before generating responses, improving accuracy and reducing hallucinations.
+The objective of this project is to build an intelligent medical assistant that retrieves relevant information from trusted medical documents before generating responses, improving accuracy and helping reduce the likelihood of hallucinations by supplying retrieved medical context to the LLM before response generation.
 
 ---
 
