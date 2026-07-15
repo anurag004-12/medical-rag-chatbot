@@ -1,0 +1,6 @@
+Medical RAG Chatbot Evaluation
+
+Questions Evaluated : 5
+Average Semantic Similarity : 0.512
+Average Lexical Context Coverage : 0.537
+Average Answer Length : 18.0 words

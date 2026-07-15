@@ -132,7 +132,6 @@ Combine the retrieved context with the user question.
 Generate a context-aware response using Google Gemini.
 
 ---
-
 # 📂 Project Structure
 
 ```text
@@ -146,10 +145,23 @@ Medical-Chatbot/
 ├── .env
 │
 ├── assets/
-│      ├── chatbot.png
-│      
+│   └── chatbot.png
+│
 ├── data/
 │   └── Medical_book.pdf
+│
+├── evaluation/
+│   ├── benchmark.csv
+│   ├── predictions.csv
+│   ├── evaluation_report.csv
+│   ├── evaluation_summary.txt
+│   ├── generate_answers.py
+│   ├── evaluate_local.py
+│   ├── similarity.png
+│   ├── coverage.png
+│   └── answer_length.png
+│
+├── experiments.ipynb
 │
 ├── src/
 │   ├── helper.py
@@ -157,13 +169,12 @@ Medical-Chatbot/
 │   ├── intent.py
 │   └── __init__.py
 │
-├── templates/
-│   └── chat.html
+├── static/
+│   └── style.css
 │
-└── static/
-    ├── style.css
+└── templates/
+    └── chat.html
 ```
-    
 ---
 
 # ⚙️ Installation
@@ -246,10 +257,76 @@ http://localhost:8080
 # 📊 Results
 
 - Successfully implemented a Retrieval-Augmented Generation (RAG) pipeline.
-- Reduced hallucinations by grounding responses in retrieved medical documents.
+- Improved response grounding by retrieving relevant medical context before generation.
 - Enabled semantic search over medical PDFs using vector embeddings.
 - Integrated Google Gemini with Pinecone for context-aware question answering.
 - Built a responsive Flask-based chatbot interface.
+
+---
+
+
+# 📏 Evaluation
+
+To assess the quality of the RAG pipeline, a local benchmark evaluation was performed using a manually curated dataset of medical question-answer pairs.
+
+The evaluation measures how closely chatbot responses match reference answers and how effectively retrieved context supports the generated responses.
+
+### Evaluation Methodology
+
+1. Created a benchmark dataset (`benchmark.csv`) containing representative medical questions and reference answers.
+2. Generated chatbot responses automatically using the complete RAG pipeline.
+3. Compared generated responses with reference answers using semantic similarity.
+4. Measured lexical overlap between generated responses and retrieved document context.
+5. Generated an evaluation report along with graphical visualizations.
+
+### Evaluation Metrics
+
+| Metric | Description |
+|----------|-------------|
+| Semantic Similarity | Cosine similarity between chatbot responses and reference answers using Sentence Transformers (`all-MiniLM-L6-v2`). |
+| Lexical Context Coverage | Percentage of words in the generated response that also appear in the retrieved document context. |
+| Answer Length | Average number of words generated per response. |
+
+### Evaluation Results
+
+| Metric | Score |
+|---------|------:|
+| Questions Evaluated | **5** |
+| Average Semantic Similarity | **0.512** |
+| Average Lexical Context Coverage | **0.537** |
+| Average Answer Length | **18 words** |
+
+### Evaluation Artifacts
+
+```
+evaluation/
+│
+├── benchmark.csv
+├── predictions.csv
+├── evaluation_report.csv
+├── evaluation_summary.txt
+├── generate_answers.py
+├── evaluate_local.py
+├── similarity.png
+├── coverage.png
+└── answer_length.png
+```
+
+### Sample Evaluation Visualizations
+
+#### Semantic Similarity
+
+![Semantic Similarity](evaluation/similarity.png)
+
+#### Context Coverage
+
+![Context Coverage](evaluation/coverage.png)
+
+#### Answer Length
+
+![Answer Length](evaluation/answer_length.png)
+
+The evaluation demonstrates that the chatbot retrieves relevant medical context and generates semantically aligned responses. This evaluation pipeline can be extended with additional benchmark datasets and metrics for more comprehensive assessment.
 
 ---
 
@@ -314,12 +391,6 @@ Contributions are welcome!
 3. Commit your changes.
 4. Push the branch.
 5. Open a Pull Request.
-
----
-
-# 📄 License
-
-This project is licensed under the MIT License.
 
 ---
 
