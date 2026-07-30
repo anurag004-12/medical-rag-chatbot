@@ -1,48 +1,55 @@
 # 🏥 Medical RAG Chatbot using Gemini, LangChain & Pinecone
 
-An AI-powered Medical Chatbot that leverages **Retrieval-Augmented Generation (RAG)** to answer user queries based on trusted medical documents. Instead of relying solely on an LLM's internal knowledge, the chatbot retrieves relevant information from a medical PDF stored in a vector database and uses Google Gemini to generate accurate, context-aware responses.
+An AI-powered **Medical Retrieval-Augmented Generation (RAG) Chatbot** that answers user queries using information retrieved from trusted medical documents.
+
+The system combines **LangChain, Pinecone Vector Database, Sentence Transformer embeddings, and Google Gemini 2.5 Flash** to retrieve relevant medical knowledge and generate context-aware responses.
 
 ---
 
 # 📌 Problem Statement
 
-Medical information is often stored in lengthy PDF documents, making it difficult for users to quickly locate relevant information.
+Medical information is often stored in large documents such as books, research papers, and medical PDFs. Finding specific information manually is time-consuming.
 
-Traditional chatbots either:
-- Depend on predefined responses, limiting flexibility.
-- Answer solely from an LLM's general knowledge, which may produce hallucinations or inaccurate medical information.
+Traditional chatbot approaches have limitations:
 
-The objective of this project is to build an intelligent medical assistant that retrieves relevant information from trusted medical documents before generating responses, improving accuracy and helping reduce the likelihood of hallucinations by supplying retrieved medical context to the LLM before response generation.
+- Rule-based chatbots provide limited predefined responses.
+- Standalone LLMs may generate incorrect or hallucinated medical information.
+- Keyword-based search fails to understand semantic meaning.
+
+The objective of this project is to build an intelligent medical assistant that retrieves relevant information from trusted medical documents before generating answers using an LLM.
 
 ---
 
 # 💡 Solution
 
-This project implements a **Retrieval-Augmented Generation (RAG)** pipeline using LangChain, Pinecone, and Google Gemini.
+This project implements a complete **Retrieval-Augmented Generation (RAG) pipeline**.
 
-Instead of directly asking the LLM to answer a question:
+Instead of directly asking an LLM to answer questions:
 
-1. Medical PDFs are loaded and divided into smaller chunks.
-2. Each chunk is converted into vector embeddings.
-3. Embeddings are stored in Pinecone Vector Database.
-4. When a user asks a question, semantic similarity search retrieves the most relevant chunks.
-5. The retrieved context and user question are passed to Google Gemini.
-6. Gemini generates a context-aware response based only on the retrieved information.
-
-This approach significantly improves response reliability compared to a standalone LLM.
+1. Medical PDF documents are loaded and processed.
+2. Documents are split into smaller text chunks.
+3. Text chunks are converted into vector embeddings.
+4. Embeddings are stored in Pinecone Vector Database.
+5. User queries are converted into embeddings.
+6. Similar document chunks are retrieved using semantic search.
+7. Retrieved context is passed to Google Gemini.
+8. Gemini generates a grounded response based on retrieved information.
 
 ---
 
 # ✨ Features
 
-- 📄 Load and process medical PDF documents
-- ✂️ Automatic document chunking
-- 🔍 Semantic search using vector embeddings
-- 🤖 Context-aware responses using Google Gemini
-- 🧠 Retrieval-Augmented Generation (RAG)
-- 💬 Interactive chatbot interface using Flask
-- ☁️ Cloud vector storage with Pinecone
-- 📈 Easily scalable for multiple documents
+- 📄 Medical PDF document processing
+- ✂️ Intelligent text chunking
+- 🔍 Semantic similarity search
+- 🧠 Retrieval-Augmented Generation pipeline
+- 🤖 Google Gemini 2.5 Flash integration
+- 🌐 Pinecone vector database integration
+- 💬 Flask-based chatbot interface
+- 🔐 Secure API key management using environment variables
+- 🐳 Docker containerization
+- 🔄 GitHub Actions CI/CD pipeline
+- 📊 Custom RAG evaluation pipeline
 
 ---
 
@@ -58,91 +65,104 @@ This approach significantly improves response reliability compared to a standalo
 | Embedding Model | sentence-transformers/all-MiniLM-L6-v2 |
 | PDF Processing | PyPDF |
 | Frontend | HTML, CSS, Bootstrap, JavaScript |
+| Containerization | Docker |
+| CI/CD | GitHub Actions |
 
 ---
 
 # 🏗 System Architecture
 
-```text
-                 User
-                   │
-                   ▼
-            Flask Web App
-                   │
-                   ▼
-            User Question
-                   │
-                   ▼
-         Embedding Generation
-                   │
-                   ▼
-       Pinecone Vector Database
-                   │
-        Top-K Similar Chunks
-                   ▼
-      Prompt + Retrieved Context
-                   │
-                   ▼
-        Google Gemini 2.5 Flash
-                   │
-                   ▼
-            Final Response
+```
+                    User
+                      |
+                      ▼
+            Flask Web Application
+                      |
+                      ▼
+            User Query Processing
+                      |
+                      ▼
+        Sentence Transformer Embeddings
+                      |
+                      ▼
+            Pinecone Vector Database
+                      |
+                      ▼
+             Top-K Similar Chunks
+                      |
+                      ▼
+          Prompt + Retrieved Context
+                      |
+                      ▼
+            Google Gemini 2.5 Flash
+                      |
+                      ▼
+             Context-Aware Response
 ```
 
 ---
 
-# 🔄 Project Workflow
+# 🔄 RAG Workflow
 
-### Step 1
-Load the medical PDF using LangChain's DirectoryLoader.
+## Document Processing Pipeline
 
-↓
-
-### Step 2
-Split the document into manageable text chunks.
-
-↓
-
-### Step 3
-Generate embeddings for every chunk using Hugging Face Sentence Transformers.
-
-↓
-
-### Step 4
-Store embeddings in Pinecone Vector Database.
-
-↓
-
-### Step 5
-User asks a medical question.
-
-↓
-
-### Step 6
-Retrieve the most relevant chunks using semantic search.
-
-↓
-
-### Step 7
-Combine the retrieved context with the user question.
-
-↓
-
-### Step 8
-Generate a context-aware response using Google Gemini.
+```
+Medical PDF
+     |
+     ▼
+PDF Loader (PyPDF)
+     |
+     ▼
+Text Chunking
+     |
+     ▼
+Embedding Generation
+     |
+     ▼
+Pinecone Vector Storage
+```
 
 ---
+
+## Query Processing Pipeline
+
+```
+User Question
+      |
+      ▼
+Query Embedding Generation
+      |
+      ▼
+Similarity Search
+      |
+      ▼
+Relevant Medical Context Retrieval
+      |
+      ▼
+Gemini Prompt Generation
+      |
+      ▼
+Final Answer
+```
+
+---
+
 # 📂 Project Structure
 
-```text
+```
 Medical-Chatbot/
 │
 ├── app.py
 ├── store_index.py
 ├── requirements.txt
 ├── setup.py
+├── Dockerfile
 ├── README.md
 ├── .env
+│
+├── .github/
+│   └── workflows/
+│       └── docker-ci.yml
 │
 ├── assets/
 │   └── chatbot.png
@@ -156,12 +176,7 @@ Medical-Chatbot/
 │   ├── evaluation_report.csv
 │   ├── evaluation_summary.txt
 │   ├── generate_answers.py
-│   ├── evaluate_local.py
-│   ├── similarity.png
-│   ├── coverage.png
-│   └── answer_length.png
-│
-├── experiments.ipynb
+│   └── evaluate_local.py
 │
 ├── src/
 │   ├── helper.py
@@ -175,11 +190,12 @@ Medical-Chatbot/
 └── templates/
     └── chat.html
 ```
+
 ---
 
-# ⚙️ Installation
+# ⚙️ Local Installation
 
-## 1. Clone the Repository
+## 1. Clone Repository
 
 ```bash
 git clone https://github.com/your-username/Medical-Chatbot.git
@@ -207,38 +223,208 @@ pip install -r requirements.txt
 
 ---
 
-## 4. Configure Environment Variables
+# 🔐 Environment Variables
 
-Create a `.env` file.
+Create a `.env` file:
 
 ```env
-GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
+GOOGLE_API_KEY=your_google_api_key
 
-PINECONE_API_KEY=YOUR_PINECONE_API_KEY
+PINECONE_API_KEY=your_pinecone_api_key
 
 PINECONE_INDEX_NAME=medical-chatbot
 ```
 
+API keys are stored separately and never hardcoded inside the application.
+
 ---
 
-## 5. Upload Embeddings to Pinecone
+# 📚 Create Vector Database Index
+
+Generate embeddings and upload documents to Pinecone:
 
 ```bash
 python store_index.py
 ```
 
+This process:
+
+- Loads medical PDF
+- Creates document chunks
+- Generates embeddings
+- Stores vectors in Pinecone
+
 ---
 
-## 6. Run the Application
+# ▶️ Run Application
+
+Start Flask application:
 
 ```bash
 python app.py
 ```
 
-Visit:
+Open:
 
 ```
 http://localhost:8080
+```
+
+---
+
+# 🐳 Docker Deployment
+
+The application is containerized using Docker to provide a consistent and reproducible runtime environment.
+
+## Docker Workflow
+
+```
+Source Code
+     |
+     ▼
+Docker Image Build
+     |
+     ▼
+Docker Container
+     |
+     ▼
+Flask RAG Application
+     |
+     ▼
+Gemini API + Pinecone
+```
+
+---
+
+## Dockerfile
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8080
+
+CMD ["python", "app.py"]
+```
+
+---
+
+## Build Docker Image
+
+```bash
+docker build -t medical-rag-chatbot .
+```
+
+---
+
+## Run Docker Container
+
+```bash
+docker run -p 8080:8080 \
+--env-file .env \
+medical-rag-chatbot
+```
+
+Application:
+
+```
+http://localhost:8080
+```
+
+---
+
+# 🔄 CI/CD Pipeline using GitHub Actions
+
+A Continuous Integration pipeline is implemented using GitHub Actions.
+
+Every code push automatically:
+
+- Checks out repository code
+- Installs dependencies
+- Builds Docker image
+- Validates container build
+
+---
+
+## CI/CD Workflow
+
+```
+Developer
+    |
+    |
+ git push
+    |
+    ▼
+GitHub Repository
+    |
+    ▼
+GitHub Actions
+    |
+    ├── Checkout Code
+    |
+    ├── Install Dependencies
+    |
+    ├── Build Docker Image
+    |
+    └── Validate Build
+```
+
+---
+
+## GitHub Actions Configuration
+
+File:
+
+```
+.github/workflows/docker-ci.yml
+```
+
+```yaml
+name: Docker CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+
+  docker-build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+
+    - name: Build Docker Image
+      run: |
+        docker build -t medical-rag-chatbot .
 ```
 
 ---
@@ -247,156 +433,97 @@ http://localhost:8080
 
 - What is allergy?
 - Explain diabetes.
-- What are the symptoms of asthma?
+- What are symptoms of asthma?
 - What causes hypertension?
-- What is pneumonia?
+- Explain pneumonia.
 - How is tuberculosis treated?
 
 ---
 
-# 📊 Results
+# 📊 RAG Evaluation
 
-- Successfully implemented a Retrieval-Augmented Generation (RAG) pipeline.
-- Improved response grounding by retrieving relevant medical context before generation.
-- Enabled semantic search over medical PDFs using vector embeddings.
-- Integrated Google Gemini with Pinecone for context-aware question answering.
-- Built a responsive Flask-based chatbot interface.
+A custom evaluation pipeline was created using a manually curated benchmark dataset.
+
+## Evaluation Process
+
+1. Created medical question-answer benchmark dataset.
+2. Generated chatbot responses using the complete RAG pipeline.
+3. Compared generated answers with reference answers.
+4. Evaluated semantic similarity and context coverage.
 
 ---
 
-
-# 📏 Evaluation
-
-To assess the quality of the RAG pipeline, a local benchmark evaluation was performed using a manually curated dataset of medical question-answer pairs.
-
-The evaluation measures how closely chatbot responses match reference answers and how effectively retrieved context supports the generated responses.
-
-### Evaluation Methodology
-
-1. Created a benchmark dataset (`benchmark.csv`) containing representative medical questions and reference answers.
-2. Generated chatbot responses automatically using the complete RAG pipeline.
-3. Compared generated responses with reference answers using semantic similarity.
-4. Measured lexical overlap between generated responses and retrieved document context.
-5. Generated an evaluation report along with graphical visualizations.
-
-### Evaluation Metrics
+## Evaluation Metrics
 
 | Metric | Description |
-|----------|-------------|
-| Semantic Similarity | Cosine similarity between chatbot responses and reference answers using Sentence Transformers (`all-MiniLM-L6-v2`). |
-| Lexical Context Coverage | Percentage of words in the generated response that also appear in the retrieved document context. |
-| Answer Length | Average number of words generated per response. |
+|--------|-------------|
+| Semantic Similarity | Cosine similarity between generated and reference answers using Sentence Transformers |
+| Context Coverage | Measures overlap between generated response and retrieved document context |
+| Answer Length | Average response length |
 
-### Evaluation Results
+---
+
+## Results
 
 | Metric | Score |
-|---------|------:|
-| Questions Evaluated | **5** |
-| Average Semantic Similarity | **0.512** |
-| Average Lexical Context Coverage | **0.537** |
-| Average Answer Length | **18 words** |
-
-### Evaluation Artifacts
-
-```
-evaluation/
-│
-├── benchmark.csv
-├── predictions.csv
-├── evaluation_report.csv
-├── evaluation_summary.txt
-├── generate_answers.py
-├── evaluate_local.py
-├── similarity.png
-├── coverage.png
-└── answer_length.png
-```
-
-### Sample Evaluation Visualizations
-
-#### Semantic Similarity
-
-![Semantic Similarity](evaluation/similarity.png)
-
-#### Context Coverage
-
-![Context Coverage](evaluation/coverage.png)
-
-#### Answer Length
-
-![Answer Length](evaluation/answer_length.png)
-
-The evaluation demonstrates that the chatbot retrieves relevant medical context and generates semantically aligned responses. This evaluation pipeline can be extended with additional benchmark datasets and metrics for more comprehensive assessment.
+|--------|------:|
+| Questions Evaluated | 5 |
+| Average Semantic Similarity | 0.512 |
+| Average Context Coverage | 0.537 |
+| Average Answer Length | 18 words |
 
 ---
 
 # 📈 Business Impact
 
-Traditional keyword search requires users to manually browse lengthy medical documents to locate relevant information.
+This chatbot improves medical information retrieval by:
 
-This chatbot improves information retrieval by:
-
+- Reducing time required to search large medical documents.
 - Providing semantic search instead of keyword matching.
-- Reducing the time required to find medical information.
-- Generating context-aware responses grounded in trusted documents.
-- Minimizing hallucinations by retrieving relevant context before response generation.
-- Providing a scalable architecture that can be extended to healthcare, legal, HR, finance, and enterprise knowledge bases.
+- Improving answer grounding through retrieved context.
+- Reducing hallucination risk by using document-based generation.
+- Providing a scalable architecture for healthcare knowledge systems.
 
 ---
 
 # 🚀 Future Improvements
 
-- Multi-document support
+- Multi-document medical knowledge base
 - Conversation memory
-- Source citations with page numbers
+- Source citation with page references
+- Streaming responses
 - Voice-enabled chatbot
 - User authentication
-- Chat history
-- Docker deployment
-- CI/CD pipeline
-- Streaming responses
-- Medical image support
+- Chat history storage
+- Medical image understanding
+- Advanced RAG evaluation using RAGAS metrics
 
 ---
 
 # 🎯 Skills Demonstrated
 
 - Retrieval-Augmented Generation (RAG)
+- Large Language Model Integration
 - Google Gemini API
-- LangChain
-- Pinecone Vector Database
+- LangChain Framework
+- Vector Database Management
 - Semantic Search
 - Prompt Engineering
-- Hugging Face Embeddings
-- Flask Web Development
+- Embedding Models
+- Flask API Development
 - PDF Processing
+- Docker Containerization
+- CI/CD Automation
 - AI Application Deployment
 
 ---
 
-# 📸 Screenshots
+# 📸 Screenshot
 
-
-![Home Page](assets/chatbot.png)
-
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome!
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes.
-4. Push the branch.
-5. Open a Pull Request.
+![Medical RAG Chatbot](assets/chatbot.png)
 
 ---
 
 # 👨‍💻 Author
 
 **Anurag Patel**
-
----
-
