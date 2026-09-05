@@ -79,7 +79,7 @@ Instead of directly asking an LLM to answer questions:
 
 # 🏗 System Architecture
 
-```text
+```
                          User
                            |
                            ▼
@@ -112,7 +112,7 @@ Instead of directly asking an LLM to answer questions:
                            ▼
                  Context-Aware Response
 
-```text
+```
 
 ---
 
