@@ -1,8 +1,8 @@
-# 🏥 Medical RAG Chatbot using Gemini, LangChain & Pinecone
+# 🏥 Medical RAG Chatbot using Gemini, LangChain, Pinecone & CrossEncoder Reranking
 
 An AI-powered **Medical Retrieval-Augmented Generation (RAG) Chatbot** that answers user queries using information retrieved from trusted medical documents.
 
-The system combines **LangChain, Pinecone Vector Database, Sentence Transformer embeddings, and Google Gemini 2.5 Flash** to retrieve relevant medical knowledge and generate context-aware responses.
+The system combines **LangChain, Pinecone Vector Database, Sentence Transformer embeddings, CrossEncoder reranking, and Google Gemini 2.5 Flash** to retrieve relevant medical knowledge and generate context-aware responses.
 
 ---
 
@@ -15,14 +15,15 @@ Traditional chatbot approaches have limitations:
 - Rule-based chatbots provide limited predefined responses.
 - Standalone LLMs may generate incorrect or hallucinated medical information.
 - Keyword-based search fails to understand semantic meaning.
+- Vector similarity retrieval may return relevant but not always the most useful chunks.
 
-The objective of this project is to build an intelligent medical assistant that retrieves relevant information from trusted medical documents before generating answers using an LLM.
+The objective of this project is to build an intelligent medical assistant that retrieves and reranks relevant information from trusted medical documents before generating answers using an LLM.
 
 ---
 
 # 💡 Solution
 
-This project implements a complete **Retrieval-Augmented Generation (RAG) pipeline**.
+This project implements a complete **Retrieval-Augmented Generation (RAG) pipeline with document reranking**.
 
 Instead of directly asking an LLM to answer questions:
 
@@ -31,9 +32,11 @@ Instead of directly asking an LLM to answer questions:
 3. Text chunks are converted into vector embeddings.
 4. Embeddings are stored in Pinecone Vector Database.
 5. User queries are converted into embeddings.
-6. Similar document chunks are retrieved using semantic search.
-7. Retrieved context is passed to Google Gemini.
-8. Gemini generates a grounded response based on retrieved information.
+6. Pinecone retrieves the top relevant document chunks using semantic similarity.
+7. A **CrossEncoder reranker** evaluates the relevance between the user query and retrieved chunks.
+8. The highest-ranked chunks are selected as final context.
+9. Retrieved context is passed to Google Gemini.
+10. Gemini generates a grounded response based on the retrieved medical information.
 
 ---
 
@@ -43,6 +46,8 @@ Instead of directly asking an LLM to answer questions:
 - ✂️ Intelligent text chunking
 - 🔍 Semantic similarity search
 - 🧠 Retrieval-Augmented Generation pipeline
+- 🔄 CrossEncoder document reranking
+- 🎯 Top-K document selection after reranking
 - 🤖 Google Gemini 2.5 Flash integration
 - 🌐 Pinecone vector database integration
 - 💬 Flask-based chatbot interface
@@ -63,6 +68,8 @@ Instead of directly asking an LLM to answer questions:
 | AI Framework | LangChain |
 | Vector Database | Pinecone |
 | Embedding Model | sentence-transformers/all-MiniLM-L6-v2 |
+| Reranker | CrossEncoder |
+| Reranking Model | Medical CrossEncoder Reranker |
 | PDF Processing | PyPDF |
 | Frontend | HTML, CSS, Bootstrap, JavaScript |
 | Containerization | Docker |
@@ -72,33 +79,40 @@ Instead of directly asking an LLM to answer questions:
 
 # 🏗 System Architecture
 
-```
-                    User
-                      |
-                      ▼
-            Flask Web Application
-                      |
-                      ▼
-            User Query Processing
-                      |
-                      ▼
-        Sentence Transformer Embeddings
-                      |
-                      ▼
-            Pinecone Vector Database
-                      |
-                      ▼
-             Top-K Similar Chunks
-                      |
-                      ▼
-          Prompt + Retrieved Context
-                      |
-                      ▼
-            Google Gemini 2.5 Flash
-                      |
-                      ▼
-             Context-Aware Response
-```
+```text
+                         User
+                           |
+                           ▼
+                 Flask Web Application
+                           |
+                           ▼
+                  User Query Processing
+                           |
+                           ▼
+            Sentence Transformer Embeddings
+                           |
+                           ▼
+                 Pinecone Vector Database
+                           |
+                           ▼
+                  Top 10 Similar Chunks
+                           |
+                           ▼
+                CrossEncoder Reranker
+                           |
+                           ▼
+                   Top 3 Relevant Chunks
+                           |
+                           ▼
+                Prompt + Retrieved Context
+                           |
+                           ▼
+                 Google Gemini 2.5 Flash
+                           |
+                           ▼
+                 Context-Aware Response
+
+```text
 
 ---
 
@@ -133,10 +147,16 @@ User Question
 Query Embedding Generation
       |
       ▼
-Similarity Search
+Pinecone Similarity Search
       |
       ▼
-Relevant Medical Context Retrieval
+Top 10 Relevant Chunks
+      |
+      ▼
+CrossEncoder Reranking
+      |
+      ▼
+Top 3 Relevant Chunks
       |
       ▼
 Gemini Prompt Generation
