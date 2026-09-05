@@ -16,6 +16,9 @@ from src.prompt import prompt
 
 from src.intent import detect_intent
 
+from sentence_transformers import CrossEncoder
+from langchain_core.documents import Document
+
 # ----------------------------------------------------
 # Load Environment Variables
 # ----------------------------------------------------
@@ -44,6 +47,13 @@ embeddings = HuggingFaceEmbeddings(
 
 print("Embedding Model Loaded.")
 
+print("Loading Reranker...")
+
+reranker = CrossEncoder(
+    "models/medical-reranker"
+)
+print("Reranker Loaded.")
+
 # ----------------------------------------------------
 # Pinecone
 # ----------------------------------------------------
@@ -64,7 +74,7 @@ print("Connected to Pinecone.")
 # ----------------------------------------------------
 
 retriever = vectorstore.as_retriever(
-    search_kwargs={"k":3}
+    search_kwargs={"k":10}
 )
 
 # ----------------------------------------------------
@@ -100,6 +110,48 @@ retrieval_chain = create_retrieval_chain(
 )
 
 print("RAG Pipeline Ready.")
+
+
+def rerank_documents(question, documents, top_n=3):
+
+    pairs = [
+        [question, doc.page_content]
+        for doc in documents
+    ]
+
+    scores = reranker.predict(pairs)
+
+    ranked_documents = sorted(
+        zip(documents, scores),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    print("\n" + "=" * 80)
+    print("RERANKING RESULTS")
+    print("=" * 80)
+
+    for rank, (doc, score) in enumerate(ranked_documents, start=1):
+
+        print(f"\nRank: {rank}")
+        print(f"Reranker Score: {score:.4f}")
+        print(f"Page: {doc.metadata.get('page', 'N/A')}")
+        print(f"Text: {doc.page_content[:250]}")
+
+    top_documents = [
+        doc for doc, score in ranked_documents[:top_n]
+    ]
+
+    print("\n" + "=" * 80)
+    print(f"TOP {top_n} DOCUMENTS SELECTED")
+    print("=" * 80)
+
+    for i, doc in enumerate(top_documents, start=1):
+        print(f"\nSelected {i}")
+        print(f"Page: {doc.metadata.get('page', 'N/A')}")
+        print(f"Text: {doc.page_content[:250]}")
+
+    return top_documents
 
 # ----------------------------------------------------
 # Home Page
@@ -147,13 +199,22 @@ def chat():
     # Medical Question
     # --------------------------
 
-    response = retrieval_chain.invoke(
-        {
-            "input": question
-        }
+    documents = retriever.invoke(question)
+    print(f"Retrieved Documents: {len(documents)}")
+    documents = rerank_documents(
+        question,
+        documents,
+        top_n=3
     )
 
-    answer = response["answer"]
+    print(f"After Reranking: {len(documents)}")
+
+    answer = document_chain.invoke(
+        {
+            "input": question,
+            "context": documents
+        }
+    )
 
     print(f"Bot : {answer}")
 
